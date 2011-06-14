@@ -3,7 +3,7 @@ NAME
     table data
 
 VERSION
-    version 0.01
+    version 0.02
 
 SYNOPSIS
     In list_countries.pl:
@@ -157,9 +157,11 @@ FUNCTIONS
 
     ** *q* => STR
 
-    A filtering option. By default, all fields will be searched using simple
-    case-insensitive string search. In the future, a method to customize
-    searching will be allowed.
+    A filtering option. By default, all fields except those specified with
+    column_searchable=0 will be searched using simple case-insensitive
+    string search. There are a few options to customize this, using these
+    gen arguments: *word_search*, *case_insensitive_search*, and
+    *custom_search*.
 
     ** Filter arguments
 

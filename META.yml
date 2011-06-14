@@ -20,4 +20,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Sub-Spec-Gen-ReadTable/
   repository: http://github.com/sharyanto/perl-Sub-Spec-Gen-ReadTable
-version: 0.01
+version: 0.02
