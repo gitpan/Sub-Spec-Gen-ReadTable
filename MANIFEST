@@ -1,0 +1,17 @@
+Build.PL
+Changes
+LICENSE
+MANIFEST
+MANIFEST.SKIP
+META.yml
+README
+dist.ini
+examples/list-countries
+lib/Sub/Spec/Gen/ReadTable.pm
+t/00-compile.t
+t/func.t
+t/release-pod-coverage.t
+t/release-pod-syntax.t
+t/spec.t
+t/testlib.pl
+weaver.ini
