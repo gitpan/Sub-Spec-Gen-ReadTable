@@ -1,6 +1,6 @@
 package Sub::Spec::Gen::ReadTable;
 BEGIN {
-  $Sub::Spec::Gen::ReadTable::VERSION = '0.02';
+  $Sub::Spec::Gen::ReadTable::VERSION = '0.03';
 }
 # ABSTRACT: Generate function (and its spec) to read table data
 
@@ -10,7 +10,7 @@ use warnings;
 use Log::Any '$log';
 
 use List::Util qw(shuffle);
-use Sub::Spec::Utils; # temp, for _parse_schema
+use Data::Sah::Util;
 
 use Exporter;
 our @ISA = qw(Exporter);
@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(gen_read_table_func);
 our %SPEC;
 
 sub _parse_schema {
-    Sub::Spec::Utils::_parse_schema(@_);
+    Data::Sah::Util::_parse_schema(@_);
 }
 
 sub _is_aoa {
@@ -71,14 +71,6 @@ _
                 of => 'str*',
                 arg_category => 'field selection',
                 summary => 'Select fields to return',
-                description => <<'_',
-
-When off, will return an array of values without field names (array/list).
-
-Default is off, will be turned on by default when 'fields' or 'detail' options
-are specified.
-
-_
                 default => $opts->{default_fields},
             }],
             sort => ['str' => {
@@ -133,7 +125,7 @@ _
             }
         }
         $col2arg->{$cname} = $a;
-        my $cf = $cspec->{attr_hashes}[0]{column_filterable};
+        my $cf = $cspec->{clause_sets}[0]{column_filterable};
         next if defined($cf) && !$cf;
         my $t = $cspec->{type};
         if ($t eq 'bool') {
@@ -200,7 +192,7 @@ _
                     "certain text",
                 arg_category => "filter for $cname",
             }];
-            my $cf = $cspec->{attr_hashes}[0]{column_filterable_regex};
+            my $cf = $cspec->{clause_sets}[0]{column_filterable_regex};
             unless (defined($cf) && !$cf) {
                 return [400, "Clash of $t filter argument: ${a}_match"]
                     if $func_spec->{args}{"${a}_match"};
@@ -321,8 +313,8 @@ sub _parse_query {
     $query->{filter_fields} = \@filter_fields;
 
     my @searchable_fields = grep {
-        !defined($col_specs->{$_}{attr_hashes}[0]{column_searchable}) ||
-            $col_specs->{$_}{attr_hashes}[0]{column_searchable}
+        !defined($col_specs->{$_}{clause_sets}[0]{column_searchable}) ||
+            $col_specs->{$_}{clause_sets}[0]{column_searchable}
         } @columns;
     my $search_opts = {ci => $opts->{case_insensitive_search}};
     my $search_re;
@@ -357,7 +349,7 @@ sub _parse_query {
             my $desc = $f =~ s/^-//;
             return [400, "Unknown field in sort: $f"]
                 unless $f ~~ @columns;
-            my $cs = $col_specs->{$f}{attr_hashes}[0]{column_sortable};
+            my $cs = $col_specs->{$f}{clause_sets}[0]{column_sortable};
             return [400, "Field $f is not sortable"]
                 unless !defined($cs) || $cs;
             my $t = $col_specs->{$f}{type};
@@ -445,7 +437,7 @@ sub _gen_func {
                 $row_h = {};
                 for my $c (keys %$col_specs) {
                     $row_h->{$c} = $row0->[
-                        $col_specs->{$c}{attr_hashes}[0]{column_index}];
+                        $col_specs->{$c}{clause_sets}[0]{column_index}];
                 }
             } elsif (ref($row0) eq 'HASH') {
                 $row_h = { %$row0 };
@@ -812,7 +804,7 @@ Sub::Spec::Gen::ReadTable - Generate function (and its spec) to read table data
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
