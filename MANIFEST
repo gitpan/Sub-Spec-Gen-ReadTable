@@ -7,6 +7,7 @@ META.yml
 README
 dist.ini
 examples/list-countries
+examples/num-and-words
 lib/Sub/Spec/Gen/ReadTable.pm
 t/00-compile.t
 t/func.t
