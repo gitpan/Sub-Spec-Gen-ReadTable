@@ -1,6 +1,6 @@
 package Sub::Spec::Gen::ReadTable;
 BEGIN {
-  $Sub::Spec::Gen::ReadTable::VERSION = '0.04';
+  $Sub::Spec::Gen::ReadTable::VERSION = '0.05';
 }
 # ABSTRACT: Generate function (and its spec) to read table data
 
@@ -10,7 +10,7 @@ use warnings;
 use Log::Any '$log';
 
 use List::Util qw(shuffle);
-use Data::Sah::Util;
+use Data::Sah;
 
 use Exporter;
 our @ISA = qw(Exporter);
@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(gen_read_table_func);
 our %SPEC;
 
 sub _parse_schema {
-    Data::Sah::Util::_parse_schema(@_);
+    Data::Sah::normalize_schema($_[0]);
 }
 
 sub _is_aoa {
@@ -823,7 +823,7 @@ Sub::Spec::Gen::ReadTable - Generate function (and its spec) to read table data
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 
