@@ -1,6 +1,6 @@
 package Sub::Spec::Gen::ReadTable;
-BEGIN {
-  $Sub::Spec::Gen::ReadTable::VERSION = '0.05';
+{
+  $Sub::Spec::Gen::ReadTable::VERSION = '0.06';
 }
 # ABSTRACT: Generate function (and its spec) to read table data
 
@@ -823,7 +823,7 @@ Sub::Spec::Gen::ReadTable - Generate function (and its spec) to read table data
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
@@ -911,6 +911,12 @@ Now you can do:
    en_name: Indonesia
 
 =head1 DESCRIPTION
+
+B<NOTICE>: This module and the L<Sub::Spec> standard is deprecated as of Jan
+2012. L<Rinci> is the new specification to replace Sub::Spec, it is about 95%
+compatible with Sub::Spec, but corrects a few issues and is more generic.
+C<Perinci::*> is the Perl implementation for Rinci and many of its modules can
+handle existing Sub::Spec sub specs.
 
 This module is useful when you want to expose a table data (an array of
 hashrefs, an array of arrays, or external data like a SQL table) as an API
@@ -1121,7 +1127,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Steven Haryanto.
+This software is copyright (c) 2012 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
