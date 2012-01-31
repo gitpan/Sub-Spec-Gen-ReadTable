@@ -14,7 +14,7 @@ meta-spec:
   version: 1.4
 name: Sub-Spec-Gen-ReadTable
 requires:
-  Data::Sah: 0
+  Data::Sah: 0.02
   Lingua::EN::Numbers: 0
   Lingua::ID::Nums2Words: 0
   Sub::Spec: 0.15
@@ -23,4 +23,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Sub-Spec-Gen-ReadTable/
   repository: http://github.com/sharyanto/perl-Sub-Spec-Gen-ReadTable
-version: 0.06
+version: 0.07

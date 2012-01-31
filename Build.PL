@@ -17,13 +17,13 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Sub-Spec-Gen-ReadTable",
-  "dist_version" => "0.06",
+  "dist_version" => "0.07",
   "license" => "perl",
   "module_name" => "Sub::Spec::Gen::ReadTable",
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
-    "Data::Sah" => 0,
+    "Data::Sah" => "0.02",
     "Lingua::EN::Numbers" => 0,
     "Lingua::ID::Nums2Words" => 0,
     "Sub::Spec" => "0.15",

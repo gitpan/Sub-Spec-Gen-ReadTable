@@ -1,6 +1,6 @@
 package Sub::Spec::Gen::ReadTable;
 {
-  $Sub::Spec::Gen::ReadTable::VERSION = '0.06';
+  $Sub::Spec::Gen::ReadTable::VERSION = '0.07';
 }
 # ABSTRACT: Generate function (and its spec) to read table data
 
@@ -125,9 +125,9 @@ _
             }
         }
         $col2arg->{$cname} = $a;
-        my $cf = $cspec->{clause_sets}[0]{column_filterable};
+        my $cf = $cspec->[1]{column_filterable};
         next if defined($cf) && !$cf;
-        my $t = $cspec->{type};
+        my $t = $cspec->[0];
         if ($t eq 'bool') {
             return [400, "Clash of $t filter argument: $a"]
                 if $func_spec->{args}{$a};
@@ -192,7 +192,7 @@ _
                     "certain text",
                 arg_category => "filter for $cname",
             }];
-            my $cf = $cspec->{clause_sets}[0]{column_filterable_regex};
+            my $cf = $cspec->[1]{column_filterable_regex};
             unless (defined($cf) && !$cf) {
                 return [400, "Clash of $t filter argument: ${a}_match"]
                     if $func_spec->{args}{"${a}_match"};
@@ -243,7 +243,7 @@ sub _parse_query {
 
     my @filter_fields;
     my @filters;
-    for my $c (grep {$col_specs->{$_}{type} eq 'bool'} @columns) {
+    for my $c (grep {$col_specs->{$_}[0] eq 'bool'} @columns) {
         my $a = $col2arg->{$c};
         my $exists;
         if (defined $args->{$a}) {
@@ -252,7 +252,7 @@ sub _parse_query {
         }
         push @filter_fields, $c if $exists && !($c ~~ @filter_fields);
     }
-    for my $c (grep {$col_specs->{$_}{type} eq 'array'} @columns) {
+    for my $c (grep {$col_specs->{$_}[0] eq 'array'} @columns) {
         my $a = $col2arg->{$c};
         my $exists;
         if (defined $args->{"has_$a"}) {
@@ -265,9 +265,9 @@ sub _parse_query {
         }
         push @filter_fields, $c if $exists && !($c ~~ @filter_fields);
     }
-    for my $c (grep {$col_specs->{$_}{type} =~ /^(int|float|str)$/}
+    for my $c (grep {$col_specs->{$_}[0] =~ /^(int|float|str)$/}
                    @columns) {
-        my $t = $col_specs->{$c}{type};
+        my $t = $col_specs->{$c}[0];
         my $exists;
         my $a = $col2arg->{$c};
         if (defined $args->{$a}) {
@@ -286,7 +286,7 @@ sub _parse_query {
         }
         push @filter_fields, $c if $exists && !($c ~~ @filter_fields);
     }
-    for my $c (grep {$col_specs->{$_}{type} =~ /^str$/} @columns) {
+    for my $c (grep {$col_specs->{$_}[0] =~ /^str$/} @columns) {
         my $a = $col2arg->{$c};
         my $exists;
         if (defined $args->{"${a}_contain"}) {
@@ -313,8 +313,8 @@ sub _parse_query {
     $query->{filter_fields} = \@filter_fields;
 
     my @searchable_fields = grep {
-        !defined($col_specs->{$_}{clause_sets}[0]{column_searchable}) ||
-            $col_specs->{$_}{clause_sets}[0]{column_searchable}
+        !defined($col_specs->{$_}[1]{column_searchable}) ||
+            $col_specs->{$_}[1]{column_searchable}
         } @columns;
     my $search_opts = {ci => $opts->{case_insensitive_search}};
     my $search_re;
@@ -333,10 +333,10 @@ sub _parse_query {
     unless ($opts->{custom_search}) {
         $query->{search_fields} = \@searchable_fields;
         $query->{search_str_fields} = [grep {
-            $col_specs->{$_}{type} =~ /^(str)$/
+            $col_specs->{$_}[0] =~ /^(str)$/
         } @searchable_fields];
         $query->{search_array_fields} = [grep {
-            $col_specs->{$_}{type} =~ /^(array)$/
+            $col_specs->{$_}[0] =~ /^(array)$/
         } @searchable_fields];
         $query->{search_re} = $search_re;
     }
@@ -349,10 +349,10 @@ sub _parse_query {
             my $desc = $f =~ s/^-//;
             return [400, "Unknown field in sort: $f"]
                 unless $f ~~ @columns;
-            my $cs = $col_specs->{$f}{clause_sets}[0]{column_sortable};
+            my $cs = $col_specs->{$f}[1]{column_sortable};
             return [400, "Field $f is not sortable"]
                 unless !defined($cs) || $cs;
-            my $t = $col_specs->{$f}{type};
+            my $t = $col_specs->{$f}[0];
             my $op = $t =~ /^(int|float)$/ ? '<=>' : 'cmp';
             #print "t=$t, op=$op\n";
             push @sorts, [$f, $op, $desc ? -1:1];
@@ -446,7 +446,7 @@ sub _gen_func {
                 $row_h = {};
                 for my $c (keys %$col_specs) {
                     $row_h->{$c} = $row0->[
-                        $col_specs->{$c}{clause_sets}[0]{column_index}];
+                        $col_specs->{$c}[1]{column_index}];
                 }
             } elsif (ref($row0) eq 'HASH') {
                 $row_h = { %$row0 };
@@ -823,7 +823,7 @@ Sub::Spec::Gen::ReadTable - Generate function (and its spec) to read table data
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 
